@@ -1,0 +1,33 @@
+Listen 9090
+<VirtualHost *:9090>
+    ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+    ServerAlias ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+
+    DocumentRoot /home/ubuntu/phpapps/insided/ui/web
+    <Directory /home/ubuntu/phpapps/insided/ui/web>
+        AllowOverride All
+        Order Allow,Deny
+        Allow from All
+	    Require all granted
+    </Directory>
+
+    ErrorLog /var/log/apache2/project_error.log
+    CustomLog /var/log/apache2/project_access.log combined
+</VirtualHost>
+
+Listen 9091
+<VirtualHost *:9091>
+    ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+    ServerAlias ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+
+    DocumentRoot /home/ubuntu/phpapps/insided/simple-blog/web
+    <Directory /home/ubuntu/phpapps/insided/simple-blog/web>
+        AllowOverride All
+        Order Allow,Deny
+        Allow from All
+	    Require all granted
+    </Directory>
+
+    ErrorLog /var/log/apache2/project_error.log
+    CustomLog /var/log/apache2/project_access.log combined
+</VirtualHost>

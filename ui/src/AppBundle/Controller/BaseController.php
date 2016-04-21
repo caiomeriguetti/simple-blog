@@ -9,5 +9,5 @@ use Unirest\Request as UniRequest;
 
 class BaseController extends Controller
 {
-	protected $apiEndpoint = 'http://api.insided.local/';
+	protected $apiEndpoint;
 }

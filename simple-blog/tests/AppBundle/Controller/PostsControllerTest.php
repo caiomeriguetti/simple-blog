@@ -8,7 +8,7 @@ use WideImage\WideImage;
 
 class PostsControllerTest extends WebTestCase {
 
-    public function getViewCountAndPostCount() {
+    public function testGetViewCountAndPostCount() {
         $client = static::createClient();
 
         //getting current counts

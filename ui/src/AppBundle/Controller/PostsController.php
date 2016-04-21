@@ -19,7 +19,7 @@ class PostsController extends BaseController
      * @Method("GET")
      */
     public function postsAsCsv(Request $request) {
-        $response = UniRequest::get($this -> apiEndpoint . 'posts/csv');
+        $response = UniRequest::get($this->container->getParameter('api_endpoint') . 'posts/csv');
         header('Pragma: public');
         header('Expires: 0');
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -78,7 +78,7 @@ class PostsController extends BaseController
 
         $body = UniBody::multipart($data, $files);
 
-        $response = UniRequest::post($this -> apiEndpoint . 'posts', null, $body);
+        $response = UniRequest::post($this->container->getParameter('api_endpoint') . 'posts', null, $body);
         return new JsonResponse($response -> body);
     }
 
@@ -89,7 +89,7 @@ class PostsController extends BaseController
     public function listPosts(Request $request) {
 
         $params = array('offset' => $request -> get('offset'));
-        $response = UniRequest::get($this -> apiEndpoint . 'posts', null, $params);
+        $response = UniRequest::get($this->container->getParameter('api_endpoint') . 'posts', null, $params);
         return new JsonResponse($response -> body);
     }
 
@@ -98,7 +98,7 @@ class PostsController extends BaseController
      * @Method("GET")
      */
     public function counts(Request $request) {
-        $response = UniRequest::get($this -> apiEndpoint . 'posts/counts');
+        $response = UniRequest::get($this->container->getParameter('api_endpoint') . 'posts/counts');
         return new JsonResponse($response -> body);
     }
 
@@ -107,7 +107,7 @@ class PostsController extends BaseController
      * @Method("POST")
      */
     public function incrementViews(Request $request) {
-        $response = UniRequest::get($this -> apiEndpoint . 'posts/views/increment');
+        $response = UniRequest::get($this->container->getParameter('api_endpoint') . 'posts/views/increment');
         return new JsonResponse($response -> body);
     }
 

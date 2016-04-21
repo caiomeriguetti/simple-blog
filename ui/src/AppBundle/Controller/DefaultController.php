@@ -14,7 +14,7 @@ class DefaultController extends BaseController
      */
     public function indexAction(Request $request)
     {
-        $response = UniRequest::post($this -> apiEndpoint . 'views/increment');
+        $response = UniRequest::post($this -> container -> getParameter('api_endpoint') . 'views/increment');
 
         // replace this example code with whatever you need
         return $this->render('default/index.html', [
