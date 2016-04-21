@@ -1,0 +1,138 @@
+.app-header-middle {
+	text-align: center;
+}
+
+.app-header-right {
+	text-align: right;
+}
+
+.centered {
+	text-align: center;
+}
+
+.invisible {
+	display: none;
+}
+
+/**
+ReplyBox
+*/
+
+.ReplyBox {
+	margin-bottom: 12px;
+}
+
+.ReplyBox .app-bt-finished {
+	margin-top: 12px;
+}
+
+.ReplyBox .panel-heading {
+	overflow: auto;
+}
+
+.ReplyBox .panel-body {
+	display: none;
+}
+
+.ReplyBox .title {
+	line-height: 32px;
+}
+
+.ReplyBox .input-group-btn {
+	display: table;
+	margin: 0 auto;
+}
+
+.ReplyBox .app-image-file {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
+}
+
+.uploadTarget {
+	width: 1px;
+	height: 1px;
+	visibility: hidden;
+	position: absolute;
+}
+
+.ReplyBox .app-bt-finished {
+	display: none;
+	width: 100%;
+}
+
+.ReplyBox .app-image-container {
+	display: none;
+}
+
+.ReplyBox .app-post-image {
+	max-width: 100%;
+	max-height: 200px;
+	margin: 0 auto;
+	border-radius: 6px;
+}
+
+.ReplyBox .app-image-container {
+	padding: 12px;
+}
+
+.ReplyBox.upload-done .app-bt-finished {
+	display: block;
+}
+
+.ReplyBox.upload-done .app-image-container {
+	display: block;
+}
+
+.ReplyBox.upload-done .panel-body {
+	display: block;
+}
+
+.ReplyBox.fixed .panel {
+	position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+  border: 0;
+}
+
+
+
+.PostList {
+	padding: 0;
+	list-style: none;
+}
+
+.PostBox h1 {
+	margin: 0;
+}
+
+.PostBox .panel-footer {
+	background-color: white;
+}
+
+.PostBox img {
+	max-width: 100%;
+	max-height: 200px;
+	margin: 0 auto;
+	display: block;
+	border-radius: 6px;
+}
+
+.PostBox .title {
+	padding-left: 12px;
+	font-weight: bold;
+	color: #666;
+}
+
+.TopBar {
+	padding: 12px;
+	border: 1px solid #e5e5e5;
+	margin-bottom: 12px;
+	margin-top: 12px;
+}

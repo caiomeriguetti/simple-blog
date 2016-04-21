@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="app">
+
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="app/css/app.css" />
+{% endblock %}
+
+{% block javascripts %}
+    <script src="node_modules/mootools/lib/mootools-core-1.5.2-server.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/mustache/mustache.min.js"></script>
+    <script src="node_modules/jquery-formatdatetime/jquery.formatDateTime.js"></script>
+    <script src="app/js/base.js"></script>
+    <script src="app/js/model.js"></script>
+    <script src="app/js/view.js"></script>
+    <script src="app/js/services.js"></script>
+    <script src="app/js/app.js"></script>
+{% endblock %}
