@@ -79,7 +79,6 @@ class PostsController extends BaseController
         $body = UniBody::multipart($data, $files);
 
         $response = UniRequest::post($this -> apiEndpoint . 'posts', null, $body);
-    
         return new JsonResponse($response -> body);
     }
 
