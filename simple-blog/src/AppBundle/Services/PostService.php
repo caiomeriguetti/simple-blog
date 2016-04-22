@@ -160,7 +160,7 @@ class PostService {
         foreach ($posts as &$post) {
             $image = $post -> getImage();
             $post->imageUrl = $baseurl . '/img-posts/' . $image;
-            $post->imageUrlFull = $baseurl . '/img-posts/' . str_replace('.', '-small.', $image);
+            $post->imageUrlFull = $baseurl . '/img-posts/' . str_replace('.', '-full.', $image);
         }
 
         return $posts;
@@ -184,7 +184,7 @@ class PostService {
 
         fputcsv($fd, $headers);
         foreach($posts as &$post) {
-            $post['imageUrl'] = $baseurl . '/img-posts/' . $post['image'];
+            $post['imageUrl'] = $baseurl . '/img-posts/' . str_replace('.', '-full.', $post['image']);
             fputcsv($fd, [$post['title'], $post['imageUrl']]);
         }
 
