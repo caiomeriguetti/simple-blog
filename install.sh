@@ -9,7 +9,7 @@ locale-gen en_US.UTF-8
 sudo dpkg-reconfigure locales
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
-rm get-pip.py
+sudo rm get-pip.py
 sudo pip install yoyo-migrations
 sudo pip install pymysql
 
@@ -20,6 +20,11 @@ sudo apt-get install -y php5
 sudo apt-get install -y php5-mysql
 sudo apt-get install -y php5-gd
 sudo apt-get install -y php5-curl
+
+#PHPUnit
+wget https://phar.phpunit.de/phpunit.phar
+chmod +x phpunit.phar
+sudo mv phpunit.phar /usr/local/bin/phpunit
 
 #composer
 php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php

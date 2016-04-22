@@ -8,10 +8,23 @@ There is some api tests: just enter the simple-blog folder and type the command 
 
 Deploy:
 
-To install everything needed to run the app execute the install.sh script.
+To install everything needed to run the app execute
 
-To deploy the app into apache just execute deploy.sh
+```bash
+./install.sh
+```
 
-There is a deploy.sh script that makes averything related to the deployment process. Basically it sets up the virtualhosts ande renames some files.
+To deploy the app into apache just execute:
+```bash
+./deploy.sh local
+```
+or
 
-The app is deployed here: http://ec2-54-187-107-64.us-west-2.compute.amazonaws.com:9090/
+```bash
+./deploy.sh prod
+```
+for production
+
+The deploy.sh script makes averything related to the deployment process. Basically it sets up the virtualhosts, renames some files, execute migrations and so on.
+
+The ui is here: http://ec2-54-187-107-64.us-west-2.compute.amazonaws.com:9090/ and the api endpoint is here: http://ec2-54-187-107-64.us-west-2.compute.amazonaws.com:9091/
