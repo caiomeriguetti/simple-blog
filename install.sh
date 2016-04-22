@@ -1,5 +1,18 @@
 #!/bin/bash
 
+#migrations
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE="en_US.UTF-8"
+locale-gen en_US.UTF-8
+sudo dpkg-reconfigure locales
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+rm get-pip.py
+sudo pip install yoyo-migrations
+sudo pip install pymysql
+
 #PHP
 sudo add-apt-repository ppa:ondrej/php5-5.6
 sudo apt-get update
@@ -21,3 +34,4 @@ sudo service apache2 reload
 
 #mysql
 sudo apt-get install -y mysql-server
+
