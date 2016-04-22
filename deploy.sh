@@ -28,8 +28,6 @@ sudo chmod 777 -R app/config
 sudo composer install --optimize-autoloader
 sudo chmod 777 -R var/cache
 sudo chmod 777 -R var/logs
-cd migrations 
-sudo cp migrate.${env}.sh migrate.sh
-./migrate.sh
+./migrate.${env}.sh
 
 sudo service apache2 reload  
