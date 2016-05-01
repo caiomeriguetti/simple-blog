@@ -41,8 +41,9 @@ php -r "unlink('composer-setup.php');"
 
 #Apache2
 sudo apt-get install -y apache2
-sudo a2enmod rewrite
-sudo service apache2 reload
+sudo apt-get install -y libapache2-mod-proxy-html libxml2-dev
+sudo a2enmod rewrite proxy proxy_http proxy_balancer headers lbmethod_bybusyness
+sudo service apache2 restart
 
 #mysql
 sudo apt-get install -y mysql-server

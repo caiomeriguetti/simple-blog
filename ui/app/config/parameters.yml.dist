@@ -17,4 +17,4 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
-    api_endpoint: http://localhost:9091/ 
+    api_endpoint: http://localhost:8888/ 

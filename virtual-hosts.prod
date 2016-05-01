@@ -1,33 +1,139 @@
-Listen 9090
-<VirtualHost *:9090>
-    ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
-    ServerAlias ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+
+#
+# UI SERVERS
+#
+
+Listen 9086
+<VirtualHost *:9086>
+    ServerName localhost
+    ServerAlias localhost
 
     DocumentRoot /home/ubuntu/phpapps/insided/ui/web
     <Directory /home/ubuntu/phpapps/insided/ui/web>
         AllowOverride All
         Order Allow,Deny
         Allow from All
-	    Require all granted
+        Require all granted
     </Directory>
 
     ErrorLog /var/log/apache2/project_error.log
     CustomLog /var/log/apache2/project_access.log combined
 </VirtualHost>
 
-Listen 9091
-<VirtualHost *:9091>
-    ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
-    ServerAlias ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+Listen 9087
+<VirtualHost *:9087>
+    ServerName localhost
+    ServerAlias localhost
+
+    DocumentRoot /home/ubuntu/phpapps/insided/ui/web
+    <Directory /home/ubuntu/phpapps/insided/ui/web>
+        AllowOverride All
+        Order Allow,Deny
+        Allow from All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/apache2/project_error.log
+    CustomLog /var/log/apache2/project_access.log combined
+</VirtualHost>
+
+#
+# API SERVERS
+#
+
+Listen 9088
+<VirtualHost *:9088>
+    ServerName localhost
+    ServerAlias localhost
 
     DocumentRoot /home/ubuntu/phpapps/insided/simple-blog/web
     <Directory /home/ubuntu/phpapps/insided/simple-blog/web>
         AllowOverride All
         Order Allow,Deny
         Allow from All
-	    Require all granted
+        Require all granted
     </Directory>
 
     ErrorLog /var/log/apache2/project_error.log
     CustomLog /var/log/apache2/project_access.log combined
+</VirtualHost>
+
+Listen 9089
+<VirtualHost *:9089>
+    ServerName localhost
+    ServerAlias localhost
+
+    DocumentRoot /home/ubuntu/phpapps/insided/simple-blog/web
+    <Directory /home/ubuntu/phpapps/insided/simple-blog/web>
+        AllowOverride All
+        Order Allow,Deny
+        Allow from All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/apache2/project_error.log
+    CustomLog /var/log/apache2/project_access.log combined
+</VirtualHost>
+
+
+#
+# UI LOAD BALANCER
+#
+
+Listen 9090
+<VirtualHost *:9090>
+  ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+  ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+
+  <IfModule mod_proxy_http.c>
+      ProxyRequests Off
+      ProxyTimeout 300
+      ProxyPreserveHost On
+      ProxyVia On
+
+      <Proxy balancer://clusterUi>
+        BalancerMember http://localhost:9086 route=route1
+        BalancerMember http://localhost:9087 route=route2
+        ProxySet lbmethod=bybusyness
+      </Proxy>
+      <Location />
+        Order allow,deny
+        Allow from all
+        ProxyPass balancer://clusterUi/ stickysession=PHPSESSIONID
+      </Location>
+
+  </IfModule>
+</VirtualHost>
+
+
+#
+# API LOAD BALANCER
+#
+
+Listen 9091
+<VirtualHost *:9091>
+  ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+  ServerAlias ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+
+  <IfModule mod_proxy_http.c>
+      ProxyRequests Off
+      ProxyTimeout 300
+      ProxyPreserveHost On
+      ProxyVia On
+
+      <Proxy balancer://clusterApi>
+        BalancerMember http://localhost:9088 route=route1
+        BalancerMember http://localhost:9089 route=route2
+        ProxySet lbmethod=bybusyness
+      </Proxy>
+      <Location />
+        Order allow,deny
+        Allow from all
+        ProxyPass balancer://clusterApi/ stickysession=PHPSESSIONID
+      </Location>
+
+  </IfModule>
 </VirtualHost>

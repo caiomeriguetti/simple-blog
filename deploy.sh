@@ -30,4 +30,4 @@ sudo chmod 777 -R var/cache
 sudo chmod 777 -R var/logs
 ./migrate.${env}.sh
 
-sudo service apache2 reload  
+sudo service apache2 restart  
