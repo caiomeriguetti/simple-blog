@@ -5,10 +5,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use WideImage\WideImage;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PostService {
+    private $em;
+    private $req;
 
-	public function save($doctrine, $request, $uploadedFile, $rootDir, &$post) {
+    function __construct(EntityManager $em, RequestStack $requestStack) {
+        $this -> em = $em;
+        $this -> req = $requestStack -> getCurrentRequest();
+    }
+
+	public function save($uploadedFile, $rootDir, &$post) {
+        $request = $this -> req;
 		$extension = strtolower($uploadedFile -> getClientOriginalExtension());
 
         if (!in_array($extension, ['jpg', 'jpeg', 'gif', 'png'])) {
@@ -43,26 +52,24 @@ class PostService {
         $post->setImage($fileName);
         $post->setCreatedAt(new \DateTime());
 
-        $em = $doctrine->getManager();
+        $em = $this -> em;
         $em->persist($post);
         $em->flush();
 
-        $em = $doctrine->getManager();
-        $query = $em->createQuery(
+        $query = $this -> em->createQuery(
             'UPDATE AppBundle:Counter c
              SET c.value = c.value + 1
              WHERE c.name = :name'
         ) -> setParaMeter('name', 'posts');
         $query -> execute();
 
-        $baseurl = $this->getBaseUrl($request);
+        $baseurl = $this->getBaseUrl();
         $post->imageUrl = $baseurl . '/img-posts/' . $fileName;
         $post->imageUrlFull = $baseurl . '/img-posts/' . $fileNameFull;
 	}
 
-	public function incrementViews($doctrine) {
-		$em = $doctrine->getManager();
-        $query = $em->createQuery(
+	public function incrementViews() {
+        $query = $this -> em->createQuery(
             'UPDATE AppBundle:Counter c
              SET c.value = c.value + 1
              WHERE c.name = :name'
@@ -70,13 +77,13 @@ class PostService {
         $query -> execute();
 	}
 
-	public function getPostData($em, $id) {
+	public function getPostData($id) {
 		
         if (!$id) {
-            throw new Exception('ID cant be empty');
+            throw new \Exception('ID cant be empty');
         }
 
-        $repository = $em -> getRepository('AppBundle:Post');
+        $repository = $this -> em -> getRepository('AppBundle:Post');
         $post = $repository -> find($id);
         if (!$post) {
             throw new \Exception('Couldnt find a post with id ' . $id);
@@ -84,8 +91,8 @@ class PostService {
         return $post;
 	}
 
-	public function getCounts($em) {
-		$repository = $em -> getRepository('AppBundle:Counter');
+	public function getCounts() {
+		$repository = $this -> em -> getRepository('AppBundle:Counter');
 
         $qb = $repository -> createQueryBuilder('counter');
         $qb->select('counter.value, counter.name');
@@ -99,8 +106,8 @@ class PostService {
         return $response;
 	}
 
-	public function getPostCount($em) {
- 		$repository = $em -> getRepository('AppBundle:Counter');
+	public function getPostCount() {
+ 		$repository = $this -> em -> getRepository('AppBundle:Counter');
 
         $qb = $repository -> createQueryBuilder('counter');
         $qb -> select('counter.value, counter.name') 
@@ -114,8 +121,8 @@ class PostService {
         return $response;
 	}
 
-	public function getViewCount($em) {
-		$repository = $em -> getRepository('AppBundle:Counter');
+	public function getViewCount() {
+		$repository = $this -> em -> getRepository('AppBundle:Counter');
 
         $qb = $repository -> createQueryBuilder('counter');
         $qb->select('counter.value, counter.name') 
@@ -129,8 +136,8 @@ class PostService {
         return $response;
 	}
 
-	public function hasNextPage($em, $offset) {
-		$repository = $em -> getRepository('AppBundle:Post');
+	public function hasNextPage($offset) {
+		$repository = $this -> em -> getRepository('AppBundle:Post');
 		$queryCount = $repository -> createQueryBuilder('p')
         -> setMaxResults(1)
         -> setFirstResult($offset+1)
@@ -141,8 +148,9 @@ class PostService {
         return $count;
 	}
 
-	public function getList($em, $request, $offset) {
-        $repository = $em -> getRepository('AppBundle:Post');
+	public function getList($offset) {
+        $request = $this -> req;
+        $repository = $this -> em -> getRepository('AppBundle:Post');
 
         if (!$offset) {
             $offset = 0;
@@ -155,7 +163,7 @@ class PostService {
             -> getQuery();
 
         $posts = $query->getResult();
-        $baseurl = $this->getBaseUrl($request);
+        $baseurl = $this->getBaseUrl();
         
         foreach ($posts as &$post) {
             $image = $post -> getImage();
@@ -166,8 +174,9 @@ class PostService {
         return $posts;
 	}
 
-	public function getCsv($em, $request) {
-		$repository = $em -> getRepository('AppBundle:Post');
+	public function getCsv() {
+        $request = $this -> req;
+		$repository = $this -> em -> getRepository('AppBundle:Post');
 
         $qb = $repository -> createQueryBuilder('posts');
         $qb -> select('posts.title, posts.image') -> orderBy('posts.id', 'DESC');
@@ -180,7 +189,7 @@ class PostService {
         }
 
         $headers = array('title', 'image');
-        $baseurl = $this -> getBaseUrl($request);
+        $baseurl = $this -> getBaseUrl();
 
         fputcsv($fd, $headers);
         foreach($posts as &$post) {
@@ -195,7 +204,8 @@ class PostService {
         return $csv;
 	}
 
-	private function getBaseUrl(Request $request) {
+	private function getBaseUrl() {
+      $request = $this -> req;
       return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-  }
+    }
 }

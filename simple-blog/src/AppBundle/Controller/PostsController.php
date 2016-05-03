@@ -14,10 +14,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class PostsController extends Controller {
 
-    private $postService;
-
-    function __construct() {
-        $this -> postService = DIContainer::service('posts');
+    private function postService() {
+        return $this -> get('posts');
     }
 
     /**
@@ -26,7 +24,7 @@ class PostsController extends Controller {
      */
     public function getPostsAsCsv(Request $request) {
         try {
-            $csv = $this -> postService -> getCsv($this->getDoctrine(), $request);
+            $csv = $this -> postService() -> getCsv();
 
             $response = new Response($csv);
             $response -> headers -> set('Pragma', 'public');
@@ -51,7 +49,7 @@ class PostsController extends Controller {
      */
     public function getViewCount() {
         try {
-            $count = $this -> postService ->getViewCount($this -> getDoctrine());
+            $count = $this -> postService() ->getViewCount();
             return new JsonResponse($count);
         } catch (\Exception $e) {
             $r = new JsonResponse(['error' => 1, 'text' => $e ->  getMessage()]);
@@ -66,7 +64,7 @@ class PostsController extends Controller {
      */
     public function getPostCount() {
         try {
-            $count = $this -> postService -> getPostCount($this->getDoctrine());
+            $count = $this -> postService() -> getPostCount();
             return new JsonResponse($count);
         } catch (\Exception $e) {
             $r = new JsonResponse(['error' => 1, 'text' => $e ->  getMessage()]);
@@ -81,7 +79,7 @@ class PostsController extends Controller {
      */
     public function counts(Request $request) {
         try {
-            $counts = $this -> postService -> getCounts($this->getDoctrine());
+            $counts = $this -> postService() -> getCounts();
             return new JsonResponse($counts);
         } catch (\Exception $e) {
             $r = new JsonResponse(['error' => 1, 'text' => $e ->  getMessage()]);
@@ -97,8 +95,8 @@ class PostsController extends Controller {
     public function listPosts(Request $request) {
         try {
             $offset = $request -> get('offset');
-            $posts = $this -> postService -> getList($this->getDoctrine(), $request, $offset);
-            $count = $this -> postService -> hasNextPage($this->getDoctrine(), $offset);
+            $posts = $this -> postService() -> getList($offset);
+            $count = $this -> postService() -> hasNextPage($offset);
 
             return new JsonResponse(['posts' => $posts, 'hasNext' => $count]);
         } catch (\Exception $e) {
@@ -116,7 +114,7 @@ class PostsController extends Controller {
     public function getPostData(Request $request) {
         try {
             $id = $request -> get('id');
-            $post = $this -> postService -> getPostData($this->getDoctrine(), $id);
+            $post = $this -> postService() -> getPostData($id);
             return new JsonResponse($post);
         } catch (\Exception $e) {
             $r = new JsonResponse(['error' => 1, 'text' => $e ->  getMessage()]);
@@ -150,8 +148,7 @@ class PostsController extends Controller {
         $post->setTitle($title);
 
         try {
-            $this -> postService -> save(
-                $this->getDoctrine(), $request, 
+            $this -> postService() -> save(
                 $uploadedFile, $rootDir, 
                 $post
             );
@@ -169,7 +166,7 @@ class PostsController extends Controller {
      */
     public function incrementViews(Request $request) {
         try {
-            $this -> postService -> incrementViews($this -> getDoctrine());
+            $this -> postService() -> incrementViews();
             return new JsonResponse(null);
         } catch (\Exception $e) {
             $r = new JsonResponse(['error' => 1, 'text' => $e ->  getMessage()]);
