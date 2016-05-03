@@ -63,9 +63,7 @@ class PostService {
         ) -> setParaMeter('name', 'posts');
         $query -> execute();
 
-        $baseurl = $this->getBaseUrl();
-        $post->imageUrl = $baseurl . '/img-posts/' . $fileName;
-        $post->imageUrlFull = $baseurl . '/img-posts/' . $fileNameFull;
+        $this -> setPostUrl($post);
 	}
 
 	public function incrementViews() {
@@ -166,9 +164,7 @@ class PostService {
         $baseurl = $this->getBaseUrl();
         
         foreach ($posts as &$post) {
-            $image = $post -> getImage();
-            $post->imageUrl = $baseurl . '/img-posts/' . $image;
-            $post->imageUrlFull = $baseurl . '/img-posts/' . str_replace('.', '-full.', $image);
+            $this -> setPostUrl($post);
         }
 
         return $posts;
@@ -178,10 +174,11 @@ class PostService {
         $request = $this -> req;
 		$repository = $this -> em -> getRepository('AppBundle:Post');
 
-        $qb = $repository -> createQueryBuilder('posts');
-        $qb -> select('posts.title, posts.image') -> orderBy('posts.id', 'DESC');
+        $qb = $repository -> createQueryBuilder('p')
+            -> orderBy('p.id', 'DESC')
+            -> getQuery();
 
-        $posts = $qb->getQuery() -> getResult();
+        $posts = $qb->getResult();
         
         $fd = fopen('php://temp/maxmemory:1048576', 'w');
         if($fd === FALSE) {
@@ -193,8 +190,8 @@ class PostService {
 
         fputcsv($fd, $headers);
         foreach($posts as &$post) {
-            $post['imageUrl'] = $baseurl . '/img-posts/' . str_replace('.', '-full.', $post['image']);
-            fputcsv($fd, [$post['title'], $post['imageUrl']]);
+            $this -> setPostUrl($post);
+            fputcsv($fd, [$post ->getTitle(), $post -> imageUrl]);
         }
 
         rewind($fd);
@@ -203,6 +200,13 @@ class PostService {
 
         return $csv;
 	}
+
+    private function setPostUrl (&$post) {
+        $image = $post -> getImage();
+        $baseurl = $this -> getBaseUrl();
+        $post->imageUrl = $baseurl . '/img-posts/' . $image;
+        $post->imageUrlFull = $baseurl . '/img-posts/' . str_replace('.', '-full.', $image);
+    }
 
 	private function getBaseUrl() {
       $request = $this -> req;
