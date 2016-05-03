@@ -1,6 +1,8 @@
 LoadModule proxy_module modules/mod_proxy.so
 LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
-LoadModule proxy_http_module modules/mod_proxy_http.so
+LoadModule proxy_http_module modules/mod_proxy_http.
+LoadModule cache_module modules/mod_cache.so
+LoadModule cache_disk_module modules/mod_cache_disk.so
 
 #
 # UI SERVERS
@@ -21,6 +23,7 @@ Listen 9086
 
     ErrorLog /var/log/apache2/project_error.log
     CustomLog /var/log/apache2/project_access.log combined
+
 </VirtualHost>
 
 Listen 9087
@@ -33,7 +36,7 @@ Listen 9087
         AllowOverride All
         Order Allow,Deny
         Allow from All
-        Require all granted
+      Require all granted
     </Directory>
 
     ErrorLog /var/log/apache2/project_error.log
@@ -86,7 +89,7 @@ Listen 9089
 Listen 9090
 <VirtualHost *:9090>
   ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
-  ServerName ec2-54-187-107-64.us-west-2.compute.amazonaws.com
+  ServerAlias ec2-54-187-107-64.us-west-2.compute.amazonaws.com
 
   <IfModule mod_proxy_http.c>
       ProxyRequests Off
@@ -104,8 +107,36 @@ Listen 9090
         Allow from all
         ProxyPass balancer://clusterUi/ stickysession=PHPSESSIONID
       </Location>
-
   </IfModule>
+
+  CacheQuickHandler off
+
+  CacheLock on
+  CacheLockPath /tmp/mod_cache-lock
+  CacheLockMaxAge 5
+
+  CacheIgnoreHeaders Set-Cookie
+  CacheIgnoreCacheControl On
+
+  <LocationMatch "^/(app|node_modules)">
+    CacheEnable disk
+    CacheHeader on
+
+    CacheDefaultExpire 60
+    CacheMaxExpire 86400
+    CacheLastModifiedFactor 0.5
+    CacheIgnoreNoLastMod On
+
+    ExpiresActive on
+    ExpiresDefault "access plus 1 minute"
+
+    Header merge Cache-Control public
+    FileETag All
+  </LocationMatch>
+
+  ErrorLog /var/log/apache2/ui_lb_error.log
+  CustomLog /var/log/apache2/ui_lb_access.log combined
+
 </VirtualHost>
 
 
@@ -137,3 +168,4 @@ Listen 9091
 
   </IfModule>
 </VirtualHost>
+

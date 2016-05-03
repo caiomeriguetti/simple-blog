@@ -37,3 +37,7 @@ What i would probably do is to configure multiple ui servers as well as multiple
 
 Additionally, i would host all static file in s3 or sets up a dedicated apache server to serve the files with some caching policy.
 
+To ilustrate i created 2 load balancers: one for the ui and other for the api. The ui load balancer is configured to cache static files for 1 minute( /app/* and /node_modules/*). Both load balancers redirects the requests to the app servers using the bybusiness balancing strategy.
+
+
+
